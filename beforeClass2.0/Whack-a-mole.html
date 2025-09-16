@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Whack-a-mole</title>
+    <style>
+        * {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+
+<body>
+    <canvas id="canv"></canvas>
+    <!-- Engine-specific Code -->
+    <script src="./engine/Vector2.js"></script>
+    <script src="./engine/Scene.js"></script>
+    <script src="./engine/GameObject.js"></script>
+    <script src="./engine/Component.js"></script>
+    <script src="./engine/Input.js"></script>
+    <script src="./engine/Engine.js"></script>
+
+    <script src="./engine/components/Transform.js"></script>
+    <script src="./engine/components/Polygon.js"></script>
+    <script src="./engine/components/Text.js"></script>
+
+    <script>
+
+        class MainScene extends Scene {
+            constructor(){
+                super()
+                this.instantiate(new MoleGameObject(), new Vector2(100, 100))
+                this.instantiate(new PointsGameObject(), new Vector2(20, 20))
+                this.instantiate(new ClickGameObject())
+            }
+        }
+
+        class MoleGameObject extends GameObject{
+            constructor(){
+                super("Mole Game Object")
+                this.addComponent(new Polygon(), {fillStyle: "blue", points:[new Vector2(-1, -1), new Vector2(-1, 1), new Vector2(1, 1), new Vector2(1, -1)]})
+                this.transform.scale = new Vector2(25, 25)
+            }
+
+        }
+
+        class PointsGameObject extends GameObject{
+            constructor(){
+                super("Points Game Object")
+                this.addComponent(new Text(), {fillStyle: "black", text:"Points: ", font: "10px Arial"})
+                this.addComponent(new PointsController())
+            }
+
+        }
+
+        class ClickGameObject extends GameObject{
+            constructor(){
+                super("Click Game Object")
+                this.addComponent(new ClickController())
+            }
+        }
+
+        class PointsController extends Component{
+            start(){
+                this.points = 0
+            }
+            update(){
+                this.gameObject.getComponent(Text).text = "Points: " + this.points
+            }
+        }
+
+        class ClickController extends Component{
+            start(){
+
+            }
+            update(){
+                console.log(Input.mouseDown, Input.mousePosition)
+
+                if(Input.mouseDown.includes(0)){
+                    const moleGameObject = Engine.currentScene.find("Mole Game Object")
+                    const point1 = Input.mousePosition
+                    const point2 = moleGameObject.transform.position
+                    const distance = point1.minus(point2).magnitude
+
+                    if(distance < moleGameObject.transform.scale.magnitude){
+                        Engine.currentScene.find("Points Game Object").getComponent(PointsController).points++
+                    }
+
+                }
+                
+            }
+        }
+
+
+
+
+        Engine.currentScene = new MainScene()
+        Engine.start()
+    </script>
+</body>
+
+</html>

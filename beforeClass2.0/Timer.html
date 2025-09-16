@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Whack-a-mole</title>
+  <style>
+    * {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+
+</head>
+
+<body>
+  <canvas id="canv"></canvas>
+  <!-- Engine-specific Code -->
+  <script src="./engine/Vector2.js"></script>
+  <script src="./engine/Scene.js"></script>
+  <script src="./engine/GameObject.js"></script>
+  <script src="./engine/Component.js"></script>
+  <script src="./engine/Input.js"></script>
+  <script src="./engine/Engine.js"></script>
+
+  <script src="./engine/components/Transform.js"></script>
+  <script src="./engine/components/Polygon.js"></script>
+  <script src="./engine/components/Text.js"></script>
+
+  <script>
+
+    class MainScene extends Scene {
+      constructor() {
+        super()
+        this.instantiate(new PointsGameObject(), new Vector2(100, 100))
+      }
+    }
+
+    class PointsGameObject extends GameObject{
+      constructor(){
+        super("Points Game Object")
+        this.addComponent(new Text(), {fillStyle: "black", font:"20px arial"})
+        this.addComponent(new PointsController())
+      }
+    }
+
+    class PointsController extends Component{
+      start(){
+        this.points = 0
+      }
+      update(){
+        this.points++
+        this.gameObject.getComponent(Text).text = "Points: " + this.points
+      }
+    }
+
+
+
+
+    Engine.currentScene = new MainScene()
+    Engine.start()
+  </script>
+</body>
+
+</html>
