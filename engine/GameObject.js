@@ -9,7 +9,7 @@ class GameObject {
     hasStarted = false
     markForDelete = false
     name = "[NO NAME]"
-    constructor(name){
+    constructor(name) {
         this.addComponent(new Transform())
         this.name = name
     }
@@ -28,15 +28,18 @@ class GameObject {
             component.draw(ctx)
         }
     }
-    addComponent(component, values){
+    addComponent(component, values) {
         this.components.push(component)
         component.gameObject = this
         Object.assign(component, values)
     }
-    get transform(){
+    get transform() {
         return this.components[0]
     }
-    destroy(){
+    destroy() {
         this.markForDelete = true
+    }
+    getComponent(type) {
+        return this.components.find(go => go instanceof type)
     }
 }
